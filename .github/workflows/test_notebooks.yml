@@ -2,7 +2,7 @@
 
 name: Test demos
 
-# Controls when the action will run. 
+# Controls when the action will run.
 on:
   # Triggers the workflow on push or pull request events but only for the master branch
   push:
@@ -10,6 +10,12 @@ on:
     - main
     - dev
   pull_request:
+
+defaults:
+  run:
+    # ensure base env is activated when running commands
+    shell: bash -eo pipefail -c "source /opt/conda/etc/profile.d/conda.sh; conda activate base; source {0}"
+
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
@@ -20,15 +26,8 @@ jobs:
     container: remdelaportemathurin/festim-workshop
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
-      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-      - uses: actions/checkout@v2
-
-      - name: Conda init
-        run : conda init bash
-
       - name: Test fenics
         run : |
-          conda activate base
           python -c "import fenics as f; mesh = f.UnitSquareMesh(3, 3);V = f.FunctionSpace(mesh, 'P', 1)"
 
       # - name: Install dependencies
@@ -41,7 +40,7 @@ jobs:
 
       # - name: env
       #   run : conda info
-      
+
       # - name: packages
       #   run : conda list
 
